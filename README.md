@@ -4,13 +4,11 @@ To read the given data and perform Feature Scaling and Feature Selection process
 data to a file.
 
 # ALGORITHM:
-```
 STEP 1:Read the given Data.
 STEP 2:Clean the Data Set using Data Cleaning Process.
 STEP 3:Apply Feature Scaling for the feature in the data set.
 STEP 4:Apply Feature Selection for the feature in the data set.
 STEP 5:Save the data to the file.
-```
 
 # FEATURE SCALING:
 1. Standard Scaler: It is also called Z-score normalization. It calculates the z-score of each value and replaces the value with the calculated Z-score. The features are then rescaled with x̄ =0 and σ=1
@@ -26,49 +24,171 @@ The feature selection techniques used are:
 3.Embedded Method
 
 # CODING AND OUTPUT:
+```python
+import pandas as pd
+import numpy as np
+import seaborn as sns
 
-![Screenshot 2024-04-08 112508](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/406dae03-34a5-497f-94b4-734fa80bebc3)
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix
 
-![Screenshot 2024-04-08 112520](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/6f0bf5b5-4144-4838-be1c-052379e67d5f)
+data=pd.read_csv("/content/income(1) (1).csv",na_values=[ " ?"])
+data
+```
+![alt text](image.png)
+```python
 
-![Screenshot 2024-04-08 112528](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/a0757bfe-3f3f-483f-beaa-e8d4612209e6)
+data.isnull().sum()
+```
+![alt text](image-1.png)
+```python
 
-![Screenshot 2024-04-08 112631](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/ad4b68a3-1d3b-48e6-9022-75d41ff19ea6)
+missing=data[data.isnull().any(axis=1)]
+missing
+```
+![alt text](image-2.png)
+```python
 
-![Screenshot 2024-04-08 112643](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/7a1d0777-f9d5-4aaa-ac08-e4dbbfa4c71a)
+data2=data.dropna(axis=0)
+data2
+```
+![alt text](image-3.png)
+```python
+sal=data["SalStat"]
 
-![Screenshot 2024-04-08 112654](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/0a78b104-54b2-49da-a58b-317d065e9f19)
+data2["SalStat"]=data["SalStat"].map({' less than or equal to 50,000':0,' greater than 50,000':1})
+print(data2['SalStat'])
+```
+![alt text](image-4.png)
+```python
+sal2=data2['SalStat']
 
-![Screenshot 2024-04-08 112704](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/403d2c13-92b5-41be-b69f-8b542a46b0e4)
-
-
-![Screenshot 2024-04-08 112715](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/9815373b-bd7b-405c-8a62-6f8b1b422324)
-
-![Screenshot 2024-04-08 112729](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/218eb45c-8707-4963-a55a-92ee34a0f304)
-
-
-![Screenshot 2024-04-08 112751](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/ccc90183-f979-423c-84b6-cbe0aff6eb4c)
-
-![Screenshot 2024-04-08 112803](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/d47e782d-d7f8-403b-bf80-873c6cf3ab83)
-
-![Screenshot 2024-04-08 112814](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/4908f27b-ffb4-4e22-9706-52519a5a5843)
-
-![Screenshot 2024-04-08 112826](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/b0fdfaac-58a4-4927-a95c-d32f6f1bb8b1)
-
-
-![Screenshot 2024-04-08 112835](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/2b4c7d19-8bce-4284-bb1c-fc916cbbeba2)
-
-![Screenshot 2024-04-08 112844](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/22a86806-d54c-46fd-b5f5-dbc7216aa6f9)
-
-![Screenshot 2024-04-08 112856](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/cb6f2aa3-976a-4590-adf8-8d9ff11d8cd3)
-
-![Screenshot 2024-04-08 112902](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/6729c95d-23b9-4d1a-9ab6-9c42ca4866b2)
+dfs=pd.concat([sal,sal2],axis=1)
+dfs
+```
+![alt text](image-5.png)
+```python
 
 
+data2
+```
+![alt text](image-6.png)
+```python
+new_data=pd.get_dummies(data2, drop_first=True)
+new_data
+```
+![alt text](image-7.png)
+```python
 
-![Screenshot 2024-04-08 112902](https://github.com/charumathiramesh/EXNO-4-DS/assets/120204455/3cac16cb-6955-4fd6-bf2e-e24f24cde60d)
+columns_list=list(new_data.columns)
+print(columns_list)
+```
+![alt text](image-8.png)
+```python
 
-      
+
+features=list(set(columns_list)-set(['SalStat']))
+print(features)
+```
+![alt text](image-9.png)
+```python
+y=new_data['SalStat'].values
+print(y)
+```
+![alt text](image-10.png)
+```python
+
+x=new_data[features].values
+print(x)
+```
+![alt text](image-11.png)
+```python
+
+train_x,test_x,train_y,test_y=train_test_split(x,y,test_size=0.3,random_state=0)
+
+KNN_classifier=KNeighborsClassifier(n_neighbors = 5)
+
+KNN_classifier.fit(train_x,train_y)
+```
+![alt text](image-12.png)
+```python
+
+prediction=KNN_classifier.predict(test_x)
+
+confusionMatrix=confusion_matrix(test_y, prediction)
+print(confusionMatrix)
+```
+![alt text](image-13.png)
+```python
+
+accuracy_score=accuracy_score(test_y,prediction)
+print(accuracy_score)
+```
+![alt text](image-14.png)
+```python
+
+print("Misclassified Samples : %d" % (test_y !=prediction).sum())
+```
+![alt text](image-15.png)
+```python
+
+data.shape
+```
+![alt text](image-16.png)
+```python
+
+import pandas as pd
+from sklearn.feature_selection import SelectKBest, mutual_info_classif, f_classif
+data={
+    'Feature1': [1,2,3,4,5],
+    'Feature2': ['A','B','C','A','B'],
+    'Feature3': [0,1,1,0,1],
+    'Target'  : [0,1,1,0,1]
+}
+
+df=pd.DataFrame(data)
+x=df[['Feature1','Feature3']]
+y=df[['Target']]
+
+selector=SelectKBest(score_func=mutual_info_classif,k=1)
+x_new=selector.fit_transform(x,y)
+
+selected_feature_indices=selector.get_support(indices=True)
+
+selected_features=x.columns[selected_feature_indices]
+print("Selected Features:")
+print(selected_features)
+```
+![alt text](image-17.png)
+```python
+
+import pandas as pd
+import numpy as np
+from scipy.stats import chi2_contingency
+
+import seaborn as sns
+tips=sns.load_dataset('tips')
+tips.head()
+```
+![alt text](image-18.png)
+```python
+
+tips.time.unique()
+```
+![alt text](image-19.png)
+```python
+
+contingency_table=pd.crosstab(tips['sex'],tips['time'])
+print(contingency_table)
+```
+![alt text](image-20.png)
+```python
+
+chi2,p,_,_=chi2_contingency(contingency_table)
+print(f"Chi-Square Statistics: {chi2}")
+print(f"P-Value: {p}")
+```
+![alt text](image-21.png)
 # RESULT:
-      Thus,given data and perform Feature Scaling and Feature Selection process and save the data to a file is performed successfully.
-
+Thus, Feature selection and Feature scaling has been used on thegiven dataset.
